@@ -8,7 +8,7 @@ class ApiService {
   }
 
   private async request<T>(config: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    // console.log("url:::",this.baseURL,process.env.API_URL)
+    console.log("url:::",this.baseURL,config)
     try{
         const response = await axios.request<T>({
           baseURL: this.baseURL,
@@ -16,6 +16,7 @@ class ApiService {
         });
         return response;
     }catch(err){
+      console.log('err::ß',err);
         throw err;
     }
   }
@@ -25,6 +26,7 @@ class ApiService {
   }
 
   async post<T>(url: string, data?: any, config?: AxiosRequestConfig): Promise<AxiosResponse<T>> {
+    console.log('sedfkhbdjnf');
     return await this.request<T>({ method: 'post', url, data, ...config });
   }
 
