@@ -1,15 +1,20 @@
+import { getServerSession } from "next-auth"
 import Link from "next/link"
+import { options } from "../api/auth/[...nextauth]/options"
 
-export default function Navbar() {
+export default async function Navbar() {
+    const session = await getServerSession(options)
+    console.log('navbar', session, "sesss")
+    const login = session?.user ? (<li><Link href="/api/auth/signout">Sign Out</Link></li>) : (<li><Link href="/api/auth/signin">Sign In</Link></li>)
+
     return (
         <nav className="bg-blue-800 p-4">
             <ul className="flex justify-evenly text-2xl font-bold">
                 <li><Link href="/">Home</Link></li>
-                <li><Link href="/api/auth/signin">Sign In</Link></li>
-                <li><Link href="/api/auth/signout">Sign Out</Link></li>
-                <li><Link href="/server">Server</Link></li>
-                <li><Link href="/client">Client</Link></li>
-                <li><Link href="/extra">Extra</Link></li>
+                {login}
+
+                <li><Link href="/admin">Dashboard</Link></li>
+                <li><Link href="/creator">Creator</Link></li>
             </ul>
         </nav>
     )
