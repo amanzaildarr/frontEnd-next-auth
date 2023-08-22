@@ -23,26 +23,42 @@ export const options: NextAuthOptions = {
                 password: { label: "Password", type: "password", placeholder: "Enter password" }
             },
             async authorize(credentials, req) {
-                const response: AxiosResponse = await apiService.post(ApiRoutes.Login, { email: credentials?.username, password: credentials?.password });
-                if (response.data) {
+                try {
+
+                    const response: AxiosResponse = await apiService.post(ApiRoutes.Login, { email: credentials?.username, password: credentials?.password });
                     return response.data
-                } else {
-                    return null
+
+                } catch (err) {
+                    console.log('Authorization err', err);
                 }
             },
         }),
     ],
     pages: {
-        signIn: '/auth/signIn',
+        // signIn: '/auth/signIn',
         // signOut: '/auth/signout',
         // error: '/auth/error', // Error code passed in query string as ?error=
         // verifyRequest: '/auth/verify-request', // (used for check email message)
         // newUser: '/auth/new-user' // New users will be directed here on first sign in (leave the property out if not of interest)
     },
     callbacks: {
+        async jwt({ token, user }) {
+            if (user?.id) {
+                const socialUser = {
+                    providerAccountId: user.id,
+                    name: user.name,
+                    email: user.email,
+                    image: user.image
+                }
+                const response = await apiService.post(ApiRoutes.SocialLogin, socialUser);
+                token.User = response.data
+            }else if (user) {
+                token.User = user
+            }
+            return token;
+        },
         async session({ session, token }) {
-            console.log('session:::::3', session);
-            console.log('token:::::3', token);
+            session.User = token.User
             return session;
         },
         async signIn({ user, account, profile }) {
