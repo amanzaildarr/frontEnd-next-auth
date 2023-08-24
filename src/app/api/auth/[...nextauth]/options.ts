@@ -2,9 +2,12 @@ import { NextAuthOptions } from "next-auth";
 import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
-import apiService from "@/lib/api.service";
+// import apiService from "@/lib/api.service";
 import ApiRoutes from "../../enums/api.routes.enums";
 import { AxiosResponse } from "axios";
+import ApiService from "@/lib/api.service";
+
+const apiService = new ApiService(undefined);
 
 export const options: NextAuthOptions = {
     providers: [
@@ -43,22 +46,25 @@ export const options: NextAuthOptions = {
     },
     callbacks: {
         async jwt({ token, user }) {
-            if (user?.id) {
+            if (user?.id) { // social login
                 const socialUser = {
                     providerAccountId: user.id,
                     name: user.name,
                     email: user.email,
                     image: user.image
                 }
-                const response = await apiService.post(ApiRoutes.SocialLogin, socialUser);
-                token.User = response.data
-            }else if (user) {
-                token.User = user
+                const response: AxiosResponse = await apiService.post(ApiRoutes.SocialLogin, socialUser);
+                token.user = response.data.user
+                token.accessToken = response.data.accessToken
+            }else if (user?.accessToken) { // credential login
+                token.user = user.user
+                token.accessToken = user.accessToken
             }
             return token;
         },
         async session({ session, token }) {
-            session.User = token.User
+            session.user = token.user
+            session.accessToken = token.accessToken
             return session;
         },
         async signIn({ user, account, profile }) {
@@ -72,6 +78,7 @@ export const options: NextAuthOptions = {
                         image: user.image,
                         // isMailVerified: profile.email_verified ?? false
                     }
+                    // create and login social user
                     await apiService.post(ApiRoutes.SocialLogin, socialUser);
                 }
                 return true;

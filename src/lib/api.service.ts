@@ -1,22 +1,32 @@
 import axios, { AxiosRequestConfig, AxiosResponse } from 'axios';
+import { signOut } from 'next-auth/react';
 
 class ApiService {
-  private baseURL: string;
 
-  constructor() {
-    this.baseURL = process.env.API_URL as string;
+  private baseURL: string;
+  private accessToken?: string;
+
+  constructor(accessToken : string | undefined) {
+    this.baseURL = process.env.API_URL || process.env.NEST_API_URL as string;
+    this.accessToken = accessToken
   }
 
   private async request<T>(config: AxiosRequestConfig): Promise<AxiosResponse<T>> {
-    try{
-        const response = await axios.request<T>({
-          baseURL: this.baseURL,
-          ...config,
-        });
-        return response;
-    }catch(err){
-      console.log('axios response err::',err);
-        throw err;
+
+    try {
+      const headers = {
+        ...(this.accessToken && {
+          Authorization: `Bearer ${this.accessToken}`,
+        }),
+      };
+      return await axios.request<T>({ baseURL: this.baseURL,headers, ...config, });
+    } catch (err : any) {
+      console.log('Axios response err::', err.response);
+      // sign out if token expires
+      if(err.response.data.message == 'Unauthorized'){
+        // signOut();
+      }
+      throw err;
     }
   }
 
@@ -31,4 +41,4 @@ class ApiService {
   // Add more methods for other HTTP methods (e.g., PUT, DELETE) as needed
 }
 
-export default new ApiService;
+export default ApiService;

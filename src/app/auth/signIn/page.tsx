@@ -13,11 +13,7 @@ export default function LogIn() {
   const handleSignIn = (e: any) => {
     e.preventDefault();
     // Perform credential validation logic here
-    alert(username);
-
-    if (password) {
-      router.push('/')
-    }
+    signIn('credentials',{username:username,password})
 
   };
   return (

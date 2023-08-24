@@ -1,6 +1,6 @@
 
 enum ApiRoutes {
-    // Define your API endpoints here
+    // Define your Backend API endpoints here
     /* Auth routes */
     Login = '/auth/login',
     SocialLogin = '/auth/social',
@@ -12,7 +12,7 @@ enum ApiRoutes {
     /*User routes*/
     DeleteUser = '/user/', // Delete /user/:id
     GetOneUser = '/user/', // Get    /user/:id
-    GetAllUsers = '/user',
+    GetAllUsers = '/user', // Get    /user
     // ... add more endpoints as needed
 }
 
