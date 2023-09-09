@@ -13,9 +13,10 @@ export default function AdminPage() {
     useEffect(() => {
         async function getUserDetails() {
             if (session?.user?._id) {
-                const response : AxiosResponse<User>= await apiService.get<User>(ApiRoutes.GetOneUser + session?.user._id)
+                const response: AxiosResponse<User> = await apiService.get<User>(ApiRoutes.GetOneUser + session?.user._id)
                 setResult(response.data)
             }
+            return
         }
         getUserDetails()
     }, [])

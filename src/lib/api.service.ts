@@ -6,7 +6,7 @@ class ApiService {
   private baseURL: string;
   private accessToken?: string;
 
-  constructor(accessToken : string | undefined) {
+  constructor(accessToken : string | undefined = undefined) {
     this.baseURL = process.env.API_URL || process.env.NEST_API_URL as string;
     this.accessToken = accessToken
   }

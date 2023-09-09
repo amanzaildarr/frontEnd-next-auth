@@ -45,7 +45,7 @@ export const options: NextAuthOptions = {
         // newUser: '/auth/new-user' // New users will be directed here on first sign in (leave the property out if not of interest)
     },
     callbacks: {
-        async jwt({ token, user }) {
+        async jwt({ token, user }:any) {
             if (user?.id) { // social login
                 const socialUser = {
                     providerAccountId: user.id,
